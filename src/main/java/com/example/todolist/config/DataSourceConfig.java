@@ -17,19 +17,26 @@ public class DataSourceConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        String[] urlParts = dbUrl.split("@");
-        String[] credsAndHost = urlParts[0].split("//")[1].split(":");
-        String[] hostAndDb = urlParts[1].split("/");
+        try {
+            // Extracting username, password, host, and database name from dbUrl
+            String[] urlParts = dbUrl.split("@");
+            String[] credsAndProtocol = urlParts[0].split("//")[1].split(":");
+            String[] hostAndDb = urlParts[1].split("/");
 
-        String username = credsAndHost[0];
-        String password = credsAndHost[1];
-        String host = hostAndDb[0];
-        String database = hostAndDb[1];
+            String username = credsAndProtocol[0];
+            String password = credsAndProtocol[1];
+            String host = hostAndDb[0];
+            String database = hostAndDb[1];
 
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://" + host + "/" + database);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
+            String jdbcUrl = "jdbc:mysql://" + host + "/" + database;
+
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+            dataSource.setUrl(jdbcUrl);
+            dataSource.setUsername(username);
+            dataSource.setPassword(password);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse JAWSDB_ORANGE_URL", e);
+        }
 
         return dataSource;
     }

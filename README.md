@@ -57,3 +57,5 @@ spring.devtools.restart.enabled=true
 spring.devtools.livereload.enabled=true
 
 Add start dependency to pom file: devtools
+
+Add heroku's free db jawsdb: heroku addons:create jawsdb:kitefin -a {appname}

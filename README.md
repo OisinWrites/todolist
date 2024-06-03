@@ -26,7 +26,13 @@ Catalina and Java env var path's set on system
 We've created a Java project with spring boot, included the set up for tailwind css for styling, we've set up our mysql database and deployed through apache
 
 Apache tomcat and maven installed.
-war file exectuted instead of spring boot run as with jar above
+war file executed instead of spring boot run as with jar above
+java -jar target/todolist-0.0.1-SNAPSHOT.war
+
+trying to set up hotswap
+java -javaagent:"C:\Program Files\JetBrains\jdk-17\lib\hotswap\hotswap-agent.jar" -XX:HotswapAgent=fatjar -jar target/todolist-0.0.1-SNAPSHOT.war
+
+
 
 Step-by-Step Plan
 Define the Data Model
@@ -39,3 +45,15 @@ Testing the Application
 Deploy the Application
 
 adding Thymeleaf view resolver to map return name for HTML files
+
+(https://medium.com/javarevisited/jdk-17-with-dcevm-and-hotswapagent-4fee7095617a)
+
+
+3 days trying to get spring boot to run. Pressing F5 and allowing permissions fixed everything
+
+LiveReload extension for chrome:
+https://chromewebstore.google.com/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei
+spring.devtools.restart.enabled=true
+spring.devtools.livereload.enabled=true
+
+Add start dependency to pom file: devtools

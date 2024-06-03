@@ -42,6 +42,13 @@
                         <p class="mt-3 text-base text-white sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl">
                             Stay organized and boost your productivity with our ToDo List Application.
                         </p>
+                        <form action="/api/words" method="POST" class="mt-8">
+                            <input type="text" name="word" placeholder="Enter a word..." class="px-4 py-2 rounded-md">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                Submit
+                            </button>
+                        </form>
+                        <div id="wordList" class="mt-8 text-white"></div>
                         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center">
                             <div class="rounded-md shadow">
                                 <a href="/signup" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-white hover:bg-gray-100 md:py-4 md:text-lg md:px-10">
@@ -158,5 +165,46 @@
 
         </div>
     </div>
+
+
+    <script>
+        document.getElementById('wordForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const word = event.target.word.value;
+
+            fetch('/api/words', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ word })
+            }).then(response => {
+                if (response.ok) {
+                    event.target.word.value = '';
+                    fetchWords();
+                }
+            });
+        });
+
+        function fetchWords() {
+            fetch('/api/words')
+                .then(response => response.json())
+                .then(words => {
+                    const wordList = document.getElementById('wordList');
+                    wordList.innerHTML = '';
+                    words.forEach(word => {
+                        const div = document.createElement('div');
+                        div.textContent = word.word;
+                        wordList.appendChild(div);
+                    });
+                });
+        }
+
+        // Fetch words every 5 seconds
+        setInterval(fetchWords, 5000);
+
+        // Initial fetch
+        fetchWords();
+    </script>
 </body>
 </html>

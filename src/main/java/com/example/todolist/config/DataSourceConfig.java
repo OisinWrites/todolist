@@ -2,20 +2,29 @@ package com.example.todolist.config;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 @Configuration
 public class DataSourceConfig {
 
-    @Value("${JAWSDB_ORANGE_URL}")
-    private String dbUrl;
+    private final Dotenv dotenv;
+
+    public DataSourceConfig(Dotenv dotenv) {
+        this.dotenv = dotenv;
+    }
 
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
+        String dbUrl = dotenv.get("JAWSDB_ORANGE_URL");
+        if (dbUrl == null || dbUrl.isEmpty()) {
+            throw new RuntimeException("JAWSDB_ORANGE_URL is not set in the environment");
+        }
 
         try {
             // Extracting username, password, host, and database name from dbUrl

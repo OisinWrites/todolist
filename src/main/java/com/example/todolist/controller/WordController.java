@@ -3,42 +3,34 @@ package com.example.todolist.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.todolist.model.Word;
-import com.example.todolist.repository.WordRepository;
+import com.example.todolist.service.WordService;
 
-@RestController
-@RequestMapping("/api/words")
+@Controller
 public class WordController {
 
     @Autowired
-    private WordRepository wordRepository;
+    private WordService wordService;
 
-    @GetMapping
-    public List<Word> getAllWords() {
-        return wordRepository.findAll();
+    @GetMapping("/words")
+    public String showIndexPage(Model model) {
+        List<Word> words = wordService.getAllWords(); // Fetch all words
+        model.addAttribute("words", words); // Add the words list to the model
+        return "index"; // Renders the index.html page
     }
 
-    @PostMapping
-    public Word createWord(@RequestBody Word word) {
-        return wordRepository.save(word);
-    }
-
-        // Endpoint to check database connection
-    @GetMapping("/check")
-    public ResponseEntity<String> checkConnection() {
-        try {
-            wordRepository.findAll();
-            return ResponseEntity.ok("Database connection is successful!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to connect to the database: " + e.getMessage());
-        }
+    // Handle POST request for adding a new word
+    @PostMapping("/words/add")
+    public String addWord(@RequestParam("word") String wordText) {
+        Word word = new Word();
+        word.setWord(wordText);
+        wordService.saveWord(word);  // Save the word using the service
+        return "redirect:/words"; // Redirect to the word list page after saving
     }
 }
